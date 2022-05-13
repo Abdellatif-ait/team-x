@@ -1,5 +1,6 @@
 const User=require('../models/user')
 const bcrypt=require('bcrypt')
+const jwt = require("jsonwebtoken")
 const {errorMessage}=require('../utils/errorHandler')
 
 
@@ -16,9 +17,16 @@ async function postLoginHandler(req,res){
             res.status(403).json({status:403,message:"Invalid Input, check Your Input"})
             return;
         }
-        req.session.isAuth=true,
-        req.session.id=user._id;
-        res.status(200).json({status:200,message:"Loged in successfuly"})
+        const payload={
+            id:user._id,
+            username:user.username
+        }
+        jwt.sign(payload,process.env.JWT_SECRET,{expiresIn:86400},(err,token)=>{
+            if(err){
+                return res.status(500).json({status:500,message:"something went wrong, try later"})
+            }
+            return res.status(200).json({status:200,data:token,message:"logged in successfully"})
+        })
     } catch (error) {
         res.status(500).json(errorMessage)
     }

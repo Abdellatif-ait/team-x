@@ -10,6 +10,13 @@ const { invalideRouteHandler } = require('./app/utils/errorHandler');
 const session = require("express-session");
 const treatment = require('./app/routes/treatment');
 const MongoDBSession= require("connect-mongodb-session")(session)
+const cors = require("cors")
+
+var corsOptions = {
+    origin: "http://localhost:3000"
+}
+
+app.use(cors(corsOptions))
 
 ConnectDB();
 
@@ -42,7 +49,7 @@ app.use('/speciality',speciality)
 app.use('/treatment',treatment)
 
 app.all('*',invalideRouteHandler)
-app.listen(process.env.PORT||3000 ,()=>{
-    console.log("Server is running on port 3000")
+app.listen(process.env.PORT||8000 ,()=>{
+    console.log("Server is running on port 8000")
 })
 
